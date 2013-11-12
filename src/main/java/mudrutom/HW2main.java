@@ -1,6 +1,9 @@
 package mudrutom;
 
+import mudrutom.game.Cell;
+import mudrutom.game.GameTreeBuilder;
 import mudrutom.game.Maze;
+import mudrutom.utils.Tree;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,6 +18,9 @@ public class HW2main {
 
 		final Maze maze = loadInputMaze(args);
 		System.out.println(maze.toString());
+
+		final Tree<Cell> gameTree = GameTreeBuilder.buildGameTree(maze);
+		System.out.println(gameTree.toString());
 
 	}
 
