@@ -10,20 +10,14 @@ public class GameTreeBuilder {
 	public static Tree<Cell> buildGameTree(Maze maze) {
 		final Tree<Cell> tree = new Tree<Cell>();
 		tree.setBreadthFirstSearch();
-
-		final Cell start = maze.findStart();
-		tree.getRoot().setNode(start);
-
-		final boolean[][] visited = new boolean[maze.height()][maze.width()];
-		visited[start.getX()][start.getY()] = true;
+		tree.getRoot().setNode(maze.findStart());
 
 		TreeNode<Cell> current = tree.getRoot();
 		do {
-			final List<Cell> childNodes = maze.expandCell(current.getNode());
+			List<Cell> childNodes = maze.expandCell(current.getNode());
 			for (Cell childNode : childNodes) {
-				if (!visited[childNode.getX()][childNode.getY()]) {
+				if (!isVisited(current, childNode)) {
 					tree.insertNodes(current, childNode);
-					visited[childNode.getX()][childNode.getY()] = true;
 				}
 			}
 
@@ -31,6 +25,10 @@ public class GameTreeBuilder {
 		} while (current != null);
 
 		return tree;
+	}
+
+	private static boolean isVisited(TreeNode<Cell> treeNode, Cell cell) {
+		return treeNode != null && (cell.equals(treeNode.getNode()) || isVisited(treeNode.getParent(), cell));
 	}
 
 }

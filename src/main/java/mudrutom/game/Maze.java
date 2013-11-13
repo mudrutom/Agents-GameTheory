@@ -2,6 +2,7 @@ package mudrutom.game;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,10 +29,10 @@ public class Maze {
 	}
 
 	public Cell findStart() {
-		for (int i = 0, height = maze.length; i < height; i++) {
-			for (int j = 0, width = maze[i].length; j < width; j++) {
-				if (maze[i][j] == START) {
-					return new Cell(i, j, START);
+		for (int y = 0, height = maze.length; y < height; y++) {
+			for (int x = 0, width = maze[y].length; x < width; x++) {
+				if (maze[y][x] == START) {
+					return new Cell(x, y, START, null);
 				}
 			}
 		}
@@ -39,28 +40,33 @@ public class Maze {
 	}
 
 	public List<Cell> expandCell(Cell cell) {
-		final List<Cell> nextCells = new LinkedList<Cell>();
 		final int x = cell.getX(), y = cell.getY();
+		if (maze[y][x] == DESTINATION) {
+			// the destination is reached,
+			return Collections.emptyList();
+		}
 
-		// WEST
-		final int west = x - 1;
-		if (x > 0 && maze[west][y] != OBSTACLE) {
-			nextCells.add(new Cell(west, y, maze[west][y]));
-		}
-		// EAST
-		final int east = x + 1;
-		if (x < maze.length - 1 && maze[east][y] != OBSTACLE) {
-			nextCells.add(new Cell(east, y, maze[east][y]));
-		}
+		final List<Cell> nextCells = new LinkedList<Cell>();
+
 		// NORTH
 		final int north = y - 1;
-		if (y > 0 && maze[x][north] != OBSTACLE) {
-			nextCells.add(new Cell(x, north, maze[x][north]));
+		if (y > 0 && maze[north][x] != OBSTACLE) {
+			nextCells.add(new Cell(x, north, maze[north][x], Direction.NORTH));
 		}
 		// SOUTH
 		final int south = y + 1;
-		if (y < maze[x].length - 1 && maze[x][south] != OBSTACLE) {
-			nextCells.add(new Cell(x, south, maze[x][south]));
+		if (y < maze.length - 1 && maze[south][x] != OBSTACLE) {
+			nextCells.add(new Cell(x, south, maze[south][x], Direction.SOUTH));
+		}
+		// WEST
+		final int west = x - 1;
+		if (x > 0 && maze[y][west] != OBSTACLE) {
+			nextCells.add(new Cell(west, y, maze[y][west], Direction.WEST));
+		}
+		// EAST
+		final int east = x + 1;
+		if (x < maze[y].length - 1 && maze[y][east] != OBSTACLE) {
+			nextCells.add(new Cell(east, y, maze[y][east], Direction.EAST));
 		}
 
 		return nextCells;
@@ -83,7 +89,11 @@ public class Maze {
 
 		final char[][] maze = new char[m][];
 		for (int i = 0; i < m; i++) {
-			maze[i] = input.readLine().substring(0, n).toCharArray();
+			final String line = input.readLine();
+			if (line == null || line.length() < n) {
+				throw new IOException("unexpected line '" + line + "'");
+			}
+			maze[i] = line.substring(0, n).toCharArray();
 		}
 		return maze;
 	}
