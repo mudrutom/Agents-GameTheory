@@ -1,13 +1,20 @@
 package mudrutom.game;
 
+/**
+ * Class representing a cell (square) in the game map.
+ */
 public class Cell {
 
+	/** Cell <tt>x</tt> and <tt>y</tt> coordinates. */
 	private final int x, y;
 
+	/** The content of the cell. */
 	private final char cell;
 
+	/** A direction from the previous cell to this one. */
 	private final Direction direction;
 
+	/** The Cell class constructor. */
 	public Cell(int x, int y, char cell, Direction direction) {
 		this.x = x;
 		this.y = y;
@@ -15,34 +22,42 @@ public class Cell {
 		this.direction = direction;
 	}
 
+	/** @return the <tt>x</tt> coordinate of this cell */
 	public int getX() {
 		return x;
 	}
 
+	/** @return the <tt>y</tt> coordinate of this cell */
 	public int getY() {
 		return y;
 	}
 
+	/** @return the content of this cell */
 	public char getCell() {
 		return cell;
 	}
 
+	/** @return the direction to this cell from the previous cell */
 	public Direction getDirection() {
 		return direction;
 	}
 
+	/** <tt>true</tt> iff this cell is free */
 	public boolean isFree() {
 		return cell == Maze.FREE;
 	}
 
+	/** <tt>true</tt> iff this cell contains gold */
 	public boolean isGold() {
 		return cell == Maze.GOLD;
 	}
 
+	/** <tt>true</tt> iff this cell is dangerous (could contain bandit) */
 	public boolean isDanger() {
 		return cell == Maze.DANGER;
 	}
 
+	/** <tt>true</tt> iff this cell is a destination cell */
 	public boolean isDestination() {
 		return cell == Maze.DESTINATION;
 	}

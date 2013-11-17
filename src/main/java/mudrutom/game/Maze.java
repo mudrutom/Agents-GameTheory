@@ -6,39 +6,64 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class representing the maze of the game.
+ */
 public class Maze {
 
+	/** Maze cell content constants. */
 	public static final char FREE = '-', OBSTACLE = '#', START = 'S', DESTINATION = 'D', GOLD = 'G', DANGER = 'E';
 
+	/** The maze itself. */
 	private final char[][] maze;
+	/** The number of bandits on this maze. */
 	private final int numberOfBandits;
+	/** The probability of successful attack of a bandit. */
 	private final double attackProbability;
 
+	/** The maze start cell. */
 	private Cell start;
+	/** List of dangerous cells on the maze. */
 	private List<Cell> dangers;
 
+	/** The MAze class constructor. */
 	public Maze(BufferedReader input) throws IOException, NumberFormatException {
 		this.maze = parseMaze(input);
 		this.numberOfBandits = parseInt(input);
 		this.attackProbability = parseDouble(input);
 	}
 
+	/** @return height of the maze */
 	public int height() {
 		return maze.length;
 	}
 
+	/** @return width of the maze */
 	public int width() {
 		return maze[0].length;
 	}
 
+	/** @return the number of bandits on this maze */
+	public int getNumberOfBandits() {
+		return numberOfBandits;
+	}
+
+	/** @return probability of successful attack of a bandit */
+	public double getAttackProbability() {
+		return attackProbability;
+	}
+
+	/** @return the start cell of the maze */
 	public Cell getStart() {
 		return start;
 	}
 
+	/** @return a list of dangerous cells in the maze */
 	public List<Cell> getDangers() {
 		return dangers;
 	}
 
+	/** Performs analysis of the maze cells. */
 	public void analyzeMaze() {
 		dangers = new LinkedList<Cell>();
 		for (int y = 0, height = maze.length; y < height; y++) {
@@ -52,6 +77,7 @@ public class Maze {
 		}
 	}
 
+	/** @return a list of possible descendants for given cell of the maze */
 	public List<Cell> expandCell(Cell cell) {
 		if (cell.getCell() == DESTINATION) {
 			// the destination is reached,
@@ -96,6 +122,7 @@ public class Maze {
 		return sb.toString();
 	}
 
+	/** @return a maze character array parsed from given input */
 	public static char[][] parseMaze(BufferedReader input) throws IOException, NumberFormatException {
 		final int m = parseInt(input);
 		final int n = parseInt(input);
@@ -111,10 +138,12 @@ public class Maze {
 		return maze;
 	}
 
+	/** @return an integer value parsed form given input */
 	public static int parseInt(BufferedReader input) throws IOException, NumberFormatException {
 		return Integer.parseInt(input.readLine());
 	}
 
+	/** @return a double value parsed form given input */
 	public static double parseDouble(BufferedReader input) throws IOException, NumberFormatException {
 		return Double.parseDouble(input.readLine());
 	}

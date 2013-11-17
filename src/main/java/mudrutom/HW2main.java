@@ -6,14 +6,19 @@ import mudrutom.game.Maze;
 import mudrutom.utils.Tree;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * Main class used for running the game solver.
+ */
 public class HW2main {
 
+	/** The main method, entry point for the solver. */
 	public static void main(String[] args) {
 
 		final Maze maze = loadInputMaze(args);
@@ -24,7 +29,9 @@ public class HW2main {
 
 	}
 
+	/** Loads the maze (game instance) from the input. */
 	private static Maze loadInputMaze(String[] args) {
+		BufferedReader reader = null;
 		try {
 			final InputStream input;
 			if (args.length < 1) {
@@ -35,7 +42,7 @@ public class HW2main {
 				input = new FileInputStream(args[0]);
 			}
 
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			reader = new BufferedReader(new InputStreamReader(input));
 			return new Maze(reader);
 		} catch (FileNotFoundException e) {
 			System.err.println("FileNotFoundException: " + e.getMessage());
@@ -46,8 +53,19 @@ public class HW2main {
 		} catch (NumberFormatException e) {
 			System.err.println("NumberFormatException: " + e.getMessage());
 			System.exit(3);
+		} finally {
+			closeQuiet(reader);
 		}
 
 		return null;
+	}
+
+	/** Quietly closes given closeable resource. */
+	private static void closeQuiet(Closeable closeable) {
+		try {
+			if (closeable != null) closeable.close();
+		} catch (IOException e) {
+			// ignore
+		}
 	}
 }
