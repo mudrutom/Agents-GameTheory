@@ -8,9 +8,10 @@ import java.util.List;
 public class GameTreeBuilder {
 
 	public static Tree<Cell> buildGameTree(Maze maze) {
+		maze.analyzeMaze();
 		final Tree<Cell> tree = new Tree<Cell>();
 		tree.setBreadthFirstSearch();
-		tree.getRoot().setNode(maze.findStart());
+		tree.getRoot().setNode(maze.getStart());
 
 		TreeNode<Cell> current = tree.getRoot();
 		do {

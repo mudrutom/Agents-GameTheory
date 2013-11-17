@@ -14,6 +14,9 @@ public class Maze {
 	private final int numberOfBandits;
 	private final double attackProbability;
 
+	private Cell start;
+	private List<Cell> dangers;
+
 	public Maze(BufferedReader input) throws IOException, NumberFormatException {
 		this.maze = parseMaze(input);
 		this.numberOfBandits = parseInt(input);
@@ -28,45 +31,55 @@ public class Maze {
 		return maze[0].length;
 	}
 
-	public Cell findStart() {
+	public Cell getStart() {
+		return start;
+	}
+
+	public List<Cell> getDangers() {
+		return dangers;
+	}
+
+	public void analyzeMaze() {
+		dangers = new LinkedList<Cell>();
 		for (int y = 0, height = maze.length; y < height; y++) {
 			for (int x = 0, width = maze[y].length; x < width; x++) {
 				if (maze[y][x] == START) {
-					return new Cell(x, y, START, null);
+					start = new Cell(x, y, START, null);
+				} else if (maze[y][x] == DANGER) {
+					dangers.add(new Cell(x, y, DANGER, null));
 				}
 			}
 		}
-		throw new IllegalStateException("the game has no start position!");
 	}
 
 	public List<Cell> expandCell(Cell cell) {
-		final int x = cell.getX(), y = cell.getY();
-		if (maze[y][x] == DESTINATION) {
+		if (cell.getCell() == DESTINATION) {
 			// the destination is reached,
 			return Collections.emptyList();
 		}
 
+		final int x = cell.getX(), y = cell.getY();
 		final List<Cell> nextCells = new LinkedList<Cell>();
 
-		// NORTH
-		final int north = y - 1;
-		if (y > 0 && maze[north][x] != OBSTACLE) {
-			nextCells.add(new Cell(x, north, maze[north][x], Direction.NORTH));
+		// UP
+		final int up = y - 1;
+		if (y > 0 && maze[up][x] != OBSTACLE) {
+			nextCells.add(new Cell(x, up, maze[up][x], Direction.UP));
 		}
-		// SOUTH
-		final int south = y + 1;
-		if (y < maze.length - 1 && maze[south][x] != OBSTACLE) {
-			nextCells.add(new Cell(x, south, maze[south][x], Direction.SOUTH));
+		// DOWN
+		final int down = y + 1;
+		if (y < maze.length - 1 && maze[down][x] != OBSTACLE) {
+			nextCells.add(new Cell(x, down, maze[down][x], Direction.DOWN));
 		}
-		// WEST
-		final int west = x - 1;
-		if (x > 0 && maze[y][west] != OBSTACLE) {
-			nextCells.add(new Cell(west, y, maze[y][west], Direction.WEST));
+		// LEFT
+		final int left = x - 1;
+		if (x > 0 && maze[y][left] != OBSTACLE) {
+			nextCells.add(new Cell(left, y, maze[y][left], Direction.LEFT));
 		}
-		// EAST
-		final int east = x + 1;
-		if (x < maze[y].length - 1 && maze[y][east] != OBSTACLE) {
-			nextCells.add(new Cell(east, y, maze[y][east], Direction.EAST));
+		// RIGHT
+		final int right = x + 1;
+		if (x < maze[y].length - 1 && maze[y][right] != OBSTACLE) {
+			nextCells.add(new Cell(right, y, maze[y][right], Direction.RIGHT));
 		}
 
 		return nextCells;
