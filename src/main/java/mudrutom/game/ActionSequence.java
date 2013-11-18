@@ -31,6 +31,14 @@ public class ActionSequence implements GameConstants {
 		return sequence;
 	}
 
+	/**
+	 * @return <tt>true</tt> iff this sequence is complete,
+	 *         i.e. it leads from the root node to a leaf node
+	 */
+	public boolean isComplete() {
+		return treeNode.isLeaf();
+	}
+
 	@Override
 	public String toString() {
 		return Arrays.toString(sequence);

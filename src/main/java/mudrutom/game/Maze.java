@@ -76,7 +76,7 @@ public class Maze implements GameConstants {
 
 	/** @return a list of possible descendants for given cell of the maze */
 	public List<Cell> expandCell(Cell cell) {
-		if (cell.getCell() == DESTINATION) {
+		if (cell.isDestination()) {
 			// the destination is reached,
 			return Collections.emptyList();
 		}

@@ -27,7 +27,7 @@ public class GameTreeHelper implements GameConstants {
 		tree.getRoot().setNode(maze.getStart());
 
 		TreeNode<Cell> current = tree.getRoot();
-		do {
+		while (current != null) {
 			// expand till possible
 			List<Cell> childNodes = maze.expandCell(current.getNode());
 			for (Cell childNode : childNodes) {
@@ -38,7 +38,7 @@ public class GameTreeHelper implements GameConstants {
 			}
 
 			current = tree.nextNode();
-		} while (current != null);
+		}
 
 		return tree;
 	}
@@ -84,9 +84,22 @@ public class GameTreeHelper implements GameConstants {
 		return sequences;
 	}
 
+	/** Returns a list of dangers on a path to given tree node. */
+	public static List<Cell> findDangersOnPath(TreeNode<Cell> treeNode) {
+		final List<Cell> dangers = new LinkedList<Cell>();
+		findDangersOnPath(treeNode, dangers);
+		return dangers;
+	}
+
+	/** Collects all dangers on a path to given tree node. */
+	private static void findDangersOnPath(TreeNode<Cell> treeNode, List<Cell> dangers) {
+		if (treeNode.getNode().isDanger()) dangers.add(treeNode.getNode());
+		if (treeNode.getParent() != null) findDangersOnPath(treeNode.getParent(), dangers);
+	}
+
 	/** Returns utility value <tt>u()</tt> of given tree node. */
 	public static double getUtilityValue(TreeNode<Cell> treeNode) {
-		return (!treeNode.getChildren().isEmpty() || !treeNode.getNode().isDestination()) ? 0.0 : computeUtility(treeNode);
+		return (!treeNode.isLeaf() || !treeNode.getNode().isDestination()) ? 0.0 : computeUtility(treeNode);
 	}
 
 	/** @return utility value of given tree node computed from its parents */

@@ -47,12 +47,17 @@ public class TreeNode<T> {
 		}
 	}
 
+	/** @return <tt>true</tt> iff this node is a leaf */
+	public boolean isLeaf() {
+		return children.isEmpty();
+	}
+
 	/** @return the node itself */
 	public T getNode() {
 		return node;
 	}
 
-	/** sets th node itself. */
+	/** sets the node itself. */
 	public void setNode(T node) {
 		this.node = node;
 	}

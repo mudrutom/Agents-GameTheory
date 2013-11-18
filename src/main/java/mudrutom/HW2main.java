@@ -32,8 +32,14 @@ public class HW2main {
 		final List<ActionSequence> sequences = GameTreeHelper.findAllSequences(gameTree, false);
 		final StringBuilder sb = new StringBuilder();
 		for (ActionSequence sequence : sequences) {
-			double utility = GameTreeHelper.getUtilityValue(sequence.getTreeNode());
-			sb.append(sequence).append(" u=").append(utility).append('\n');
+			if (sequence.isComplete()) {
+				double utility = GameTreeHelper.getUtilityValue(sequence.getTreeNode());
+				List<Cell> dangers = GameTreeHelper.findDangersOnPath(sequence.getTreeNode());
+				sb.append(sequence);
+				sb.append(" u=").append(utility);
+				sb.append(" |dangers|=").append(dangers.size());
+				sb.append('\n');
+			}
 		}
 		System.out.println(sb.toString());
 
