@@ -13,45 +13,9 @@ import java.util.List;
 /**
  * Utility class for working with game trees.
  */
-public class GameTreeHelper {
+public class GameTreeHelper implements GameConstants {
 	
 	private GameTreeHelper() {}
-
-	/** Constructs all action-sequences for given game tree. */
-	public static List<Direction[]> findAllSequences(Tree<Cell> tree, boolean sorted) {
-		final List<Direction[]> sequences = new LinkedList<Direction[]>();
-
-		// create and apply a visitor that will generate all sequences
-		final Visitor<Cell, Direction[]> cellVisitor = new Visitor<Cell, Direction[]>() {
-			@Override
-			public Direction[] visit(Cell element, Direction[] prevSeq) {
-				if (element.getDirection() == null) {
-					// root node of the tree
-					sequences.add(prevSeq);
-					return prevSeq;
-				}
-
-				// append previous sequence with the next action
-				final Direction[] sequence = Arrays.copyOf(prevSeq, prevSeq.length + 1);
-				sequence[prevSeq.length] = element.getDirection();
-				sequences.add(sequence);
-				return sequence;
-			}
-		};
-		tree.applyVisitor(cellVisitor, new Direction[0]);
-
-		if (sorted) {
-			// sort all sequences by their length
-			Collections.sort(sequences, new Comparator<Direction[]>() {
-				@Override
-				public int compare(Direction[] one, Direction[] two) {
-					return one.length - two.length;
-				}
-			});
-		}
-
-		return sequences;
-	}
 
 	/** Constructs and returns a game tree for provided maze. */
 	public static Tree<Cell> buildGameTree(Maze maze) {
@@ -82,5 +46,51 @@ public class GameTreeHelper {
 	/** @return <tt>true</tt> iff given cell in on a path to given tree node */
 	private static boolean isVisited(TreeNode<Cell> treeNode, Cell cell) {
 		return treeNode != null && (cell.equals(treeNode.getNode()) || isVisited(treeNode.getParent(), cell));
+	}
+
+	/** Constructs all action-sequences for given game tree. */
+	public static List<ActionSequence> findAllSequences(Tree<Cell> tree, boolean sorted) {
+		final List<ActionSequence> sequences = new LinkedList<ActionSequence>();
+
+		// create and apply a visitor that will generate all sequences
+		final Visitor<TreeNode<Cell>, Direction[]> cellVisitor = new Visitor<TreeNode<Cell>, Direction[]>() {
+			@Override
+			public Direction[] visit(TreeNode<Cell> treeNode, Direction[] prevSeq) {
+				if (treeNode.getNode().getDirection() == null) {
+					// root node of the tree
+					sequences.add(new ActionSequence(prevSeq, treeNode));
+					return prevSeq;
+				}
+
+				// append previous sequence with the next action
+				final Direction[] sequence = Arrays.copyOf(prevSeq, prevSeq.length + 1);
+				sequence[prevSeq.length] = treeNode.getNode().getDirection();
+				sequences.add(new ActionSequence(sequence, treeNode));
+				return sequence;
+			}
+		};
+		tree.applyVisitor(cellVisitor, new Direction[0]);
+
+		if (sorted) {
+			// sort all sequences by their length
+			Collections.sort(sequences, new Comparator<ActionSequence>() {
+				@Override
+				public int compare(ActionSequence one, ActionSequence two) {
+					return one.getSequence().length - two.getSequence().length;
+				}
+			});
+		}
+
+		return sequences;
+	}
+
+	/** Returns utility value <tt>u()</tt> of given tree node. */
+	public static double getUtilityValue(TreeNode<Cell> treeNode) {
+		return (!treeNode.getChildren().isEmpty() || !treeNode.getNode().isDestination()) ? 0.0 : computeUtility(treeNode);
+	}
+
+	/** @return utility value of given tree node computed from its parents */
+	private static double computeUtility(TreeNode<Cell> treeNode) {
+		return treeNode.getNode().getUtility() + ((treeNode.getParent() == null) ? 0.0 : computeUtility(treeNode.getParent()));
 	}
 }

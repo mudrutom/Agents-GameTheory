@@ -3,7 +3,7 @@ package mudrutom.game;
 /**
  * Class representing a cell (square) in the game map.
  */
-public class Cell {
+public class Cell implements GameConstants {
 
 	/** Cell <tt>x</tt> and <tt>y</tt> coordinates. */
 	private final int x, y;
@@ -42,24 +42,38 @@ public class Cell {
 		return direction;
 	}
 
+	/** @return utility value of this particular cell */
+	public double getUtility() {
+		switch (cell) {
+			case DESTINATION:
+				return POINTS_FOR_DESTINATION;
+			case GOLD:
+				return POINTS_FOR_GOLD;
+			case FREE:
+			case DANGER:
+			default:
+				return 0.0;
+		}
+	}
+
 	/** <tt>true</tt> iff this cell is free */
 	public boolean isFree() {
-		return cell == Maze.FREE;
+		return cell == FREE;
 	}
 
 	/** <tt>true</tt> iff this cell contains gold */
 	public boolean isGold() {
-		return cell == Maze.GOLD;
+		return cell == GOLD;
 	}
 
 	/** <tt>true</tt> iff this cell is dangerous (could contain bandit) */
 	public boolean isDanger() {
-		return cell == Maze.DANGER;
+		return cell == DANGER;
 	}
 
 	/** <tt>true</tt> iff this cell is a destination cell */
 	public boolean isDestination() {
-		return cell == Maze.DESTINATION;
+		return cell == DESTINATION;
 	}
 
 	@Override

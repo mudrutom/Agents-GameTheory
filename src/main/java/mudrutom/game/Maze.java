@@ -9,10 +9,7 @@ import java.util.List;
 /**
  * Class representing the maze of the game.
  */
-public class Maze {
-
-	/** Maze cell content constants. */
-	public static final char FREE = '-', OBSTACLE = '#', START = 'S', DESTINATION = 'D', GOLD = 'G', DANGER = 'E';
+public class Maze implements GameConstants {
 
 	/** The maze itself. */
 	private final char[][] maze;
