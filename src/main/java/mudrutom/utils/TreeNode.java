@@ -57,6 +57,16 @@ public class TreeNode<T> {
 		this.node = node;
 	}
 
+	/** Uses provided Visitor to visit itself and all its children. */
+	public <R> void apply(Visitor<T, R> visitor, R previous) {
+		if (visitor != null) {
+			final R next = visitor.visit(node, previous);
+			for (TreeNode<T> child : children) {
+				child.apply(visitor, next);
+			}
+		}
+	}
+
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

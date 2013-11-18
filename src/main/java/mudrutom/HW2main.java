@@ -1,7 +1,8 @@
 package mudrutom;
 
 import mudrutom.game.Cell;
-import mudrutom.game.GameTreeBuilder;
+import mudrutom.game.Direction;
+import mudrutom.game.GameTreeHelper;
 import mudrutom.game.Maze;
 import mudrutom.utils.Tree;
 
@@ -12,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Main class used for running the game solver.
@@ -24,8 +27,15 @@ public class HW2main {
 		final Maze maze = loadInputMaze(args);
 		System.out.println(maze.toString());
 
-		final Tree<Cell> gameTree = GameTreeBuilder.buildGameTree(maze);
+		final Tree<Cell> gameTree = GameTreeHelper.buildGameTree(maze);
 		System.out.println(gameTree.toString());
+
+		final List<Direction[]> sequences = GameTreeHelper.findAllSequences(gameTree, false);
+		final StringBuilder sb = new StringBuilder();
+		for (Direction[] sequence : sequences) {
+			sb.append(Arrays.toString(sequence)).append('\n');
+		}
+		System.out.println(sb.toString());
 
 	}
 

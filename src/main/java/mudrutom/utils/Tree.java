@@ -65,6 +65,11 @@ public class Tree<T> {
 		return null;
 	}
 
+	/** Applies given Visitor to all nodes of the tree. */
+	public <R> void applyVisitor(Visitor<T, R> visitor, R origin) {
+		root.apply(visitor, origin);
+	}
+
 	@Override
 	public String toString() {
 		return root.toString();
