@@ -6,13 +6,13 @@ package mudrutom.game;
 public class Cell implements GameConstants {
 
 	/** Cell <tt>x</tt> and <tt>y</tt> coordinates. */
-	private final int x, y;
+	protected final int x, y;
 
 	/** The content of the cell. */
-	private final char cell;
+	protected final char cell;
 
 	/** A direction from the previous cell to this one. */
-	private final Direction direction;
+	protected final Direction direction;
 
 	/** The Cell class constructor. */
 	public Cell(int x, int y, char cell, Direction direction) {
