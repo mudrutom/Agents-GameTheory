@@ -18,4 +18,13 @@ public class GameNode extends Cell {
 	public Direction[] getSequence() {
 		return sequence;
 	}
+
+	/** @return the sequence of this node as a string */
+	public String getSequenceString() {
+		final StringBuilder sb = new StringBuilder();
+		for (Direction d : sequence) {
+			sb.append(d.toShortString());
+		}
+		return sb.toString();
+	}
 }

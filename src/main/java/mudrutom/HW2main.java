@@ -1,5 +1,7 @@
 package mudrutom;
 
+import mudrutom.game.BanditsConfig;
+import mudrutom.game.Cell;
 import mudrutom.game.GameNode;
 import mudrutom.game.GameTreeHelper;
 import mudrutom.game.Maze;
@@ -13,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,25 +24,34 @@ public class HW2main {
 
 	/** The main method, entry point for the solver. */
 	public static void main(String[] args) {
+		final StringBuilder sb = new StringBuilder();
 
 		final Maze maze = loadInputMaze(args);
-		System.out.println(maze.toString());
+		sb.append("\nMaze:\n");
+		sb.append(maze.toString()).append('\n');
 
 		final Tree<GameNode> gameTree = GameTreeHelper.buildGameTree(maze);
-		System.out.println(gameTree.toString());
+		sb.append("\nGame Tree:\n");
+		sb.append(gameTree.toString()).append('\n');
+
+		final BanditsConfig banditsConfig = new BanditsConfig(maze);
+		sb.append("\nBandits Config:\n");
+		for (List<Cell> positions : banditsConfig.getPossiblePositions()) {
+			sb.append(positions).append('\n');
+		}
 
 		final List<TreeNode<GameNode>> leafNodes = GameTreeHelper.findLeafNodes(gameTree);
-		final StringBuilder sb = new StringBuilder();
+		sb.append("\nLeafs:\n");
 		for (TreeNode<GameNode> leafNode : leafNodes) {
 			double utility = GameTreeHelper.getUtilityValue(leafNode);
 			List<GameNode> dangers = GameTreeHelper.findDangersOnPath(leafNode);
-			sb.append(Arrays.toString(leafNode.getNode().getSequence()));
+			sb.append(leafNode.getNode().getSequenceString());
 			sb.append(" u=").append(utility);
 			sb.append(" |dangers|=").append(dangers.size());
 			sb.append('\n');
 		}
-		System.out.println(sb.toString());
 
+		System.out.println(sb.toString());
 	}
 
 	/** Loads the maze (game instance) from the input. */

@@ -95,6 +95,6 @@ public class Cell implements GameConstants {
 
 	@Override
 	public String toString() {
-		return "(" + String.valueOf(cell) + ")";
+		return String.format("(%c)[%d,%d]", cell, x, y);
 	}
 }
