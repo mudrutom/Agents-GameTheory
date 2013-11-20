@@ -72,14 +72,14 @@ public class GameTreeHelper implements GameConstants {
 	}
 
 	/** Returns a list of dangers on a path to given tree node. */
-	public static List<GameNode> findDangersOnPath(TreeNode<GameNode> treeNode) {
-		final List<GameNode> dangers = new LinkedList<GameNode>();
+	public static List<Cell> findDangersOnPath(TreeNode<GameNode> treeNode) {
+		final List<Cell> dangers = new LinkedList<Cell>();
 		findDangersOnPath(treeNode, dangers);
 		return dangers;
 	}
 
 	/** Collects all dangers on a path to given tree node. */
-	private static void findDangersOnPath(TreeNode<GameNode> treeNode, List<GameNode> dangers) {
+	private static void findDangersOnPath(TreeNode<GameNode> treeNode, List<Cell> dangers) {
 		if (treeNode.getNode().isDanger()) dangers.add(treeNode.getNode());
 		if (treeNode.getParent() != null) findDangersOnPath(treeNode.getParent(), dangers);
 	}

@@ -5,6 +5,7 @@ import mudrutom.game.Cell;
 import mudrutom.game.GameNode;
 import mudrutom.game.GameTreeHelper;
 import mudrutom.game.Maze;
+import mudrutom.linprog.LPBuilder;
 import mudrutom.utils.Tree;
 import mudrutom.utils.TreeNode;
 
@@ -44,7 +45,7 @@ public class HW2main {
 		sb.append("\nLeafs:\n");
 		for (TreeNode<GameNode> leafNode : leafNodes) {
 			double utility = GameTreeHelper.getUtilityValue(leafNode);
-			List<GameNode> dangers = GameTreeHelper.findDangersOnPath(leafNode);
+			List<Cell> dangers = GameTreeHelper.findDangersOnPath(leafNode);
 			sb.append(leafNode.getNode().getSequenceString());
 			sb.append(" u=").append(utility);
 			sb.append(" |dangers|=").append(dangers.size());
@@ -52,6 +53,8 @@ public class HW2main {
 		}
 
 		System.out.println(sb.toString());
+
+		LPBuilder.solveLPForAgent(gameTree, banditsConfig);
 	}
 
 	/** Loads the maze (game instance) from the input. */

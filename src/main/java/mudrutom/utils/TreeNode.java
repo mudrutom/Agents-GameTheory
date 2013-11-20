@@ -47,6 +47,11 @@ public class TreeNode<T> {
 		}
 	}
 
+	/** @return <tt>true</tt> iff this node is the root */
+	public boolean isRoot() {
+		return parent == null;
+	}
+
 	/** @return <tt>true</tt> iff this node is a leaf */
 	public boolean isLeaf() {
 		return children.isEmpty();
