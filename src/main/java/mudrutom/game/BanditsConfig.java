@@ -58,7 +58,7 @@ public class BanditsConfig implements GameConstants {
 	 *         and actual positions of the bandits
 	 */
 	public double computeExpectedUtility(double utility, List<Cell> dangersOnPath, List<Cell> banditPositions) {
-		if (dangersOnPath.isEmpty()) {
+		if (dangersOnPath.isEmpty() || utility == 0.0) {
 			return utility;
 		} else {
 			int banditsCrossed = 0;

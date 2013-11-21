@@ -55,20 +55,18 @@ public class GameTreeHelper implements GameConstants {
 		return new GameNode(childCell, sequence);
 	}
 
-	/** Finds and returns all leaf nodes of given game tree. */
-	public static List<TreeNode<GameNode>> findLeafNodes(Tree<GameNode> tree) {
-		final List<TreeNode<GameNode>> leafs = new LinkedList<TreeNode<GameNode>>();
-		final Visitor<TreeNode<GameNode>, Void> leafCollector = new Visitor<TreeNode<GameNode>, Void>() {
+	/** Analyzes and returns all nodes from given game tree. */
+	public static List<TreeNode<GameNode>> analyzeAllNodes(Tree<GameNode> tree) {
+		final List<TreeNode<GameNode>> nodes = new LinkedList<TreeNode<GameNode>>();
+		final Visitor<TreeNode<GameNode>> nodeVisitor = new Visitor<TreeNode<GameNode>>() {
 			@Override
-			public Void visit(TreeNode<GameNode> treeNode, Void v) {
-				if (treeNode.isLeaf()) {
-					leafs.add(treeNode);
-				}
-				return null;
+			public void visit(TreeNode<GameNode> treeNode) {
+				treeNode.getNode().setUtility(getUtilityValue(treeNode));
+				nodes.add(treeNode);
 			}
 		};
-		tree.applyVisitor(leafCollector, null);
-		return leafs;
+		tree.applyVisitor(nodeVisitor);
+		return nodes;
 	}
 
 	/** Returns a list of dangers on a path to given tree node. */
@@ -91,6 +89,6 @@ public class GameTreeHelper implements GameConstants {
 
 	/** @return utility value of given tree node computed from its parents */
 	private static double computeUtility(TreeNode<GameNode> treeNode) {
-		return treeNode.getNode().getUtility() + ((treeNode.getParent() == null) ? 0.0 : computeUtility(treeNode.getParent()));
+		return treeNode.getNode().getCellUtility() + ((treeNode.getParent() == null) ? 0.0 : computeUtility(treeNode.getParent()));
 	}
 }

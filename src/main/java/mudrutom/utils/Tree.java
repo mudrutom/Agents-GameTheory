@@ -66,8 +66,8 @@ public class Tree<T> {
 	}
 
 	/** Applies given Visitor to all nodes of the tree. */
-	public <R> void applyVisitor(Visitor<TreeNode<T>, R> visitor, R origin) {
-		root.apply(visitor, origin);
+	public void applyVisitor(Visitor<TreeNode<T>> visitor) {
+		root.apply(visitor);
 	}
 
 	@Override

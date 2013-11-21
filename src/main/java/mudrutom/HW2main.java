@@ -1,11 +1,13 @@
 package mudrutom;
 
+import ilog.concert.IloException;
 import mudrutom.game.BanditsConfig;
 import mudrutom.game.Cell;
 import mudrutom.game.GameNode;
 import mudrutom.game.GameTreeHelper;
 import mudrutom.game.Maze;
 import mudrutom.linprog.LPBuilder;
+import mudrutom.linprog.LinearProgram;
 import mudrutom.utils.Tree;
 import mudrutom.utils.TreeNode;
 
@@ -41,20 +43,31 @@ public class HW2main {
 			sb.append(positions).append('\n');
 		}
 
-		final List<TreeNode<GameNode>> leafNodes = GameTreeHelper.findLeafNodes(gameTree);
+		final List<TreeNode<GameNode>> nodes = GameTreeHelper.analyzeAllNodes(gameTree);
 		sb.append("\nLeafs:\n");
-		for (TreeNode<GameNode> leafNode : leafNodes) {
-			double utility = GameTreeHelper.getUtilityValue(leafNode);
-			List<Cell> dangers = GameTreeHelper.findDangersOnPath(leafNode);
-			sb.append(leafNode.getNode().getSequenceString());
-			sb.append(" u=").append(utility);
-			sb.append(" |dangers|=").append(dangers.size());
-			sb.append('\n');
+		for (TreeNode<GameNode> node : nodes) {
+			if (node.isLeaf()) {
+				List<Cell> dangers = GameTreeHelper.findDangersOnPath(node);
+				sb.append(node.getNode().getSequenceString());
+				sb.append(" u=").append(node.getNode().getUtility());
+				sb.append(" |dangers|=").append(dangers.size());
+				sb.append('\n');
+			}
 		}
 
 		System.out.println(sb.toString());
 
-		LPBuilder.solveLPForAgent(gameTree, banditsConfig);
+		try {
+			final LinearProgram lpAgent = LPBuilder.buildPForAgent(nodes, banditsConfig);
+			lpAgent.export("lp");
+			lpAgent.solve();
+			System.out.println(String.format("value of the game = %f", lpAgent.getObjectiveValue()));
+			lpAgent.close();
+		} catch (IloException e) {
+			System.err.println("IloException: " + e.getMessage());
+			System.exit(10);
+		}
+
 	}
 
 	/** Loads the maze (game instance) from the input. */

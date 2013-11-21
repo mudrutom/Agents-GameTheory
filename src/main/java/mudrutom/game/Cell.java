@@ -43,7 +43,7 @@ public class Cell implements GameConstants {
 	}
 
 	/** @return utility value of this particular cell */
-	public double getUtility() {
+	public double getCellUtility() {
 		switch (cell) {
 			case DESTINATION:
 				return POINTS_FOR_DESTINATION;

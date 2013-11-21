@@ -8,10 +8,14 @@ public class GameNode extends Cell {
 	/** The game action-sequence leading to this node. */
 	protected final Direction[] sequence;
 
+	/** Utility value of this node. */
+	protected double utility;
+
 	/** The GameNode class constructor. */
 	public GameNode(Cell cell, Direction[] sequence) {
 		super(cell.getX(), cell.getY(), cell.getCell(), cell.getDirection());
 		this.sequence = sequence;
+		this.utility = Double.NaN;
 	}
 
 	/** @return the game action-sequence leading to this node */
@@ -26,5 +30,15 @@ public class GameNode extends Cell {
 			sb.append(d.toShortString());
 		}
 		return sb.toString();
+	}
+
+	/** @return utility value of this node. */
+	public double getUtility() {
+		return utility;
+	}
+
+	/** Sets utility value of this node. */
+	public void setUtility(double utility) {
+		this.utility = utility;
 	}
 }

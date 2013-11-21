@@ -68,11 +68,11 @@ public class TreeNode<T> {
 	}
 
 	/** Uses provided Visitor to visit itself and all its children. */
-	public <R> void apply(Visitor<TreeNode<T>, R> visitor, R previous) {
+	public void apply(Visitor<TreeNode<T>> visitor) {
 		if (visitor != null) {
-			final R next = visitor.visit(this, previous);
+			visitor.visit(this);
 			for (TreeNode<T> child : children) {
-				child.apply(visitor, next);
+				child.apply(visitor);
 			}
 		}
 	}
