@@ -28,7 +28,6 @@ public class Maze implements GameConstants {
 		this.maze = parseMaze(input);
 		this.numberOfBandits = parseInt(input);
 		this.attackProbability = parseDouble(input);
-		analyzeMaze();
 	}
 
 	/** @return a Cell value at given <tt>[x,y]</tt> coordinates */
@@ -106,7 +105,7 @@ public class Maze implements GameConstants {
 	}
 
 	/** Performs analysis of the maze cells. */
-	protected void analyzeMaze() {
+	public void analyzeMaze() {
 		dangers = new LinkedList<Cell>();
 		for (int y = 0, height = maze.length; y < height; y++) {
 			for (int x = 0, width = maze[y].length; x < width; x++) {

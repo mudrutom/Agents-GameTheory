@@ -22,7 +22,7 @@ public class LPBuilder {
 	private LPBuilder() {}
 
 	/** Constructs and returns LP for given input. */
-	public static LinearProgram buildPForAgent(Tree<GameNode> gameTree, Table<GameNode, BanditPositions, Double> utilityTable) throws IloException {
+	public static LinearProgram buildAgentLP(Tree<GameNode> gameTree, Table<GameNode, BanditPositions, Double> utilityTable) throws IloException {
 		final LinearProgram lp = new LinearProgram();
 		final IloModeler model = lp.getModel();
 

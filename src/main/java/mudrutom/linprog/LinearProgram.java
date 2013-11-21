@@ -33,18 +33,27 @@ public class LinearProgram {
 	/** Upper bound to be used. */
 	private double ub = UB;
 
-	/** The objective value of this LP. */
+	/** The objective of this LP. */
 	private IloNumExpr objective;
+	/** The objective of this LP. */
+	private double objectiveValue;
 
 	/** Constructor of the LinearProgram class. */
 	public LinearProgram() throws IloException {
 		model = new IloCplex();
 		variables = new LinkedHashMap<String, IloNumVar>();
+		objective = null;
+		objectiveValue = Double.NaN;
 	}
 
 	/** @return the model of this LP */
 	public IloModeler getModel() {
 		return model;
+	}
+
+	/** @return the objective value */
+	public double getObjectiveValue() {
+		return objectiveValue;
 	}
 
 	/** Sets bounds to be used for creating new variables. */
@@ -65,14 +74,13 @@ public class LinearProgram {
 		model.addMaximize(objective);
 	}
 
-	/** @return the objective value */
-	public double getObjectiveValue() throws IloException {
-		return model.getValue(objective);
-	}
-
 	/** Tries to solve this LP instance. */
 	public boolean solve() throws IloException {
-		return model.solve();
+		final boolean feasible = model.solve();
+		if (feasible) {
+			objectiveValue = model.getValue(objective);
+		}
+		return feasible;
 	}
 
 	/** Exports this LP into a file. */
@@ -118,6 +126,20 @@ public class LinearProgram {
 			final IloNumVar var = model.numVar(lb, ub, IloNumVarType.Float, name);
 			variables.put(name, var);
 			return var;
+		}
+	}
+
+	/** @return value of a variable for given game node */
+	public double getValue(GameNode gameNode) throws IloException {
+		return getValue("r_" + gameNode.getSequenceString());
+	}
+
+	/** @return value of a variable for given name */
+	public double getValue(String name) throws IloException {
+		if (variables.containsKey(name)) {
+			return model.getValue(variables.get(name));
+		} else {
+			return Double.NaN;
 		}
 	}
 
