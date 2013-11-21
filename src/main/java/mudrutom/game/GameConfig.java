@@ -2,6 +2,7 @@ package mudrutom.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,17 +50,18 @@ public class GameConfig implements GameConstants {
 	}
 
 	/**
-	 * @return an expected utility value for given dangers on a path
+	 * @return an expected utility value for given node
 	 *         and actual positions of the bandits
 	 */
-	public double computeExpectedUtility(double utility, List<Cell> dangersOnPath, BanditPositions banditPositions) {
-		if (dangersOnPath.isEmpty() || utility == 0.0) {
+	public double computeExpectedUtility(GameNode gameNode, BanditPositions banditPositions) {
+		final double utility = gameNode.getUtility();
+		final List<Cell > dangersOnPath = gameNode.getDangersOnPath();
+		if (banditPositions.isEmpty()) {
+			return 0.0;
+		} else if (dangersOnPath.isEmpty() || utility == 0.0) {
 			return utility;
 		} else {
-			int banditsCrossed = 0;
-			for (Cell danger : dangersOnPath) {
-				if (banditPositions.contains(danger)) banditsCrossed++;
-			}
+			int banditsCrossed = banditPositions.getBanditsCrossed(dangersOnPath);
 			return utility * Math.pow(1.0 - attackProbability, banditsCrossed);
 		}
 	}
@@ -67,6 +69,7 @@ public class GameConfig implements GameConstants {
 	/** @return generated list of all possible bandit positions */
 	protected List<BanditPositions> generateAllPossiblePositions() {
 		possibleBanditPositions = new LinkedList<BanditPositions>();
+		possibleBanditPositions.add(new BanditPositions(Collections.<Cell>emptyList()));
 
 		// special case
 		if (dangers.size() <= numberOfBandits) {
@@ -77,7 +80,7 @@ public class GameConfig implements GameConstants {
 		// find all possible combinations (selecting k elements from n elements)
 		final int n = dangers.size();
 		final int k = n - numberOfBandits;
-		final int size = binomialCoefficient(n, k);
+		final int size = binomialCoefficient(n, k) + 1;
 
 		// initialize
 		final boolean[] index = new boolean[n];

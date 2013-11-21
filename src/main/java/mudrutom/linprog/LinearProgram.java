@@ -82,13 +82,28 @@ public class LinearProgram {
 
 	/** @return variable for given tree node */
 	public IloNumVar getVar(TreeNode<GameNode> treeNode) throws IloException {
-		return getVar("r_" + treeNode.getNode().getSequenceString());
+		return getVar(treeNode.getNode());
+	}
+
+	/** @return variable for given game node */
+	public IloNumVar getVar(GameNode gameNode) throws IloException {
+		return getVar("r_" + gameNode.getSequenceString());
 	}
 
 	/** @return variables for given list of tree nodes */
-	public IloNumVar[] getVars(List<TreeNode<GameNode>> treeNodes) throws IloException {
+	public IloNumVar[] getVarsForTreeNodes(List<TreeNode<GameNode>> treeNodes) throws IloException {
 		final IloNumVar[] vars = new IloNumVar[treeNodes.size()];
 		final Iterator<TreeNode<GameNode>> iterator = treeNodes.iterator();
+		for (int i = 0; iterator.hasNext(); i++) {
+			vars[i] = getVar(iterator.next());
+		}
+		return vars;
+	}
+
+	/** @return variables for given list of game nodes */
+	public IloNumVar[] getVarsForGameNodes(List<GameNode> gameNodes) throws IloException {
+		final IloNumVar[] vars = new IloNumVar[gameNodes.size()];
+		final Iterator<GameNode> iterator = gameNodes.iterator();
 		for (int i = 0; iterator.hasNext(); i++) {
 			vars[i] = getVar(iterator.next());
 		}

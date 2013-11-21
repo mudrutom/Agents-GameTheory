@@ -15,9 +15,18 @@ public class BanditPositions implements GameConstants {
 		this.banditPositions = banditPositions;
 	}
 
-	/** @return <tt>true</tt> iff a bandit is at given cell */
-	public boolean contains(Cell cell) {
-		return cell.isDanger() && banditPositions.contains(cell);
+	/** @return <tt>true</tt> iff the bandit positions is empty */
+	public boolean isEmpty() {
+		return banditPositions.isEmpty();
+	}
+
+	/** @return the number of bandits at given cells */
+	public int getBanditsCrossed(List<Cell> cell) {
+		int bandits = 0;
+		for (Cell banditPosition : banditPositions) {
+			if (cell.contains(banditPosition)) bandits++;
+		}
+		return bandits;
 	}
 
 	@Override
@@ -36,6 +45,10 @@ public class BanditPositions implements GameConstants {
 
 	@Override
 	public String toString() {
+		if (banditPositions.isEmpty()) {
+			return "{}";
+		}
+
 		final StringBuilder sb = new StringBuilder();
 		for (Cell cell : banditPositions) {
 			sb.append(String.format("(%d,%d)", cell.getX(), cell.getY()));
