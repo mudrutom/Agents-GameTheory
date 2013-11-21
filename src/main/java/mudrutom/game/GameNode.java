@@ -7,6 +7,8 @@ public class GameNode extends Cell {
 
 	/** The game action-sequence leading to this node. */
 	protected final Direction[] sequence;
+	/** The sequence of this node as a string. */
+	protected final String sequenceString;
 
 	/** Utility value of this node. */
 	protected double utility;
@@ -15,6 +17,7 @@ public class GameNode extends Cell {
 	public GameNode(Cell cell, Direction[] sequence) {
 		super(cell.getX(), cell.getY(), cell.getCell(), cell.getDirection());
 		this.sequence = sequence;
+		sequenceString = getSequenceString(sequence);
 		this.utility = Double.NaN;
 	}
 
@@ -25,11 +28,7 @@ public class GameNode extends Cell {
 
 	/** @return the sequence of this node as a string */
 	public String getSequenceString() {
-		final StringBuilder sb = new StringBuilder();
-		for (Direction d : sequence) {
-			sb.append(d.toShortString());
-		}
-		return sb.toString();
+		return sequenceString;
 	}
 
 	/** @return utility value of this node. */
@@ -40,5 +39,18 @@ public class GameNode extends Cell {
 	/** Sets utility value of this node. */
 	public void setUtility(double utility) {
 		this.utility = utility;
+	}
+
+	/** @return a string representation of given sequence */
+	public static String getSequenceString(Direction[] sequence) {
+		if (sequence.length < 1) {
+			return "{}";
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		for (Direction d : sequence) {
+			sb.append(d.toShortString());
+		}
+		return sb.toString();
 	}
 }

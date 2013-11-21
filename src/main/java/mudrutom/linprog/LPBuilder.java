@@ -3,8 +3,9 @@ package mudrutom.linprog;
 import ilog.concert.IloException;
 import ilog.concert.IloModeler;
 import ilog.concert.IloNumVar;
-import mudrutom.game.BanditsConfig;
+import mudrutom.game.BanditPositions;
 import mudrutom.game.Cell;
+import mudrutom.game.GameConfig;
 import mudrutom.game.GameNode;
 import mudrutom.game.GameTreeHelper;
 import mudrutom.utils.TreeNode;
@@ -20,7 +21,7 @@ public class LPBuilder {
 	private LPBuilder() {}
 
 	/** Constructs and returns LP for given input. */
-	public static LinearProgram buildPForAgent(List<TreeNode<GameNode>> nodes, BanditsConfig banditsConfig) throws IloException {
+	public static LinearProgram buildPForAgent(List<TreeNode<GameNode>> nodes, GameConfig gameConfig) throws IloException {
 		final LinearProgram lp = new LinearProgram();
 		final IloModeler model = lp.getModel();
 
@@ -32,10 +33,10 @@ public class LPBuilder {
 
 			IloNumVar var = lp.getVar(treeNode);
 			IloNumVar[] childVars = lp.getVars(treeNode.getChildren());
-			model.addEq(var, model.sum(childVars));
+			model.addEq(var, model.sum(childVars), "c_" + treeNode.getNode().getSequenceString());
 
 			if (treeNode.isRoot()) {
-				model.addEq(var, 1.0);
+				model.addEq(var, 1.0, "c_root");
 			}
 		}
 
@@ -51,16 +52,16 @@ public class LPBuilder {
 		}
 
 		// optimizing against the opponent best response
-		final List<List<Cell>> possiblePositions = banditsConfig.getPossiblePositions();
+		final List<BanditPositions> possiblePositions = gameConfig.getPossibleBanditPositions();
 		IloNumVar[] leafVars = lp.getVars(leafNodes);
-		for (List<Cell> banditPositions : possiblePositions) {
+		for (BanditPositions banditPositions : possiblePositions) {
 			double[] utilities = new double[leafNodes.size()];
 			int i = 0;
 			for (TreeNode<GameNode> leaf : leafNodes) {
 				List<Cell> dangersOnPath = GameTreeHelper.findDangersOnPath(leaf);
-				utilities[i++] = banditsConfig.computeExpectedUtility(leaf.getNode().getUtility(), dangersOnPath, banditPositions);
+				utilities[i++] = gameConfig.computeExpectedUtility(leaf.getNode().getUtility(), dangersOnPath, banditPositions);
 			}
-			model.addLe(root, model.scalProd(utilities, leafVars));
+			model.addLe(root, model.scalProd(utilities, leafVars), "c_" + banditPositions.toString());
 		}
 
 		return lp;

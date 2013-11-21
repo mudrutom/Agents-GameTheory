@@ -17,8 +17,6 @@ public class GameTreeHelper implements GameConstants {
 
 	/** Constructs and returns a game tree for provided maze. */
 	public static Tree<GameNode> buildGameTree(Maze maze) {
-		maze.analyzeMaze();
-
 		// init the game tree
 		final Tree<GameNode> tree = new Tree<GameNode>();
 		tree.setBreadthFirstSearch();
@@ -29,8 +27,7 @@ public class GameTreeHelper implements GameConstants {
 			// expand till possible
 			List<Cell> childCells = maze.expandCell(current.getNode());
 			for (Cell cell : childCells) {
-				final boolean visited = isVisited(current, cell);
-				if (!visited) {
+				if (!isVisited(current, cell)) {
 					// insert unvisited cells
 					tree.insertNodes(current, createChildNode(current.getNode(), cell));
 				}

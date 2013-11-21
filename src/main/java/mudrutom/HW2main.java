@@ -1,8 +1,9 @@
 package mudrutom;
 
 import ilog.concert.IloException;
-import mudrutom.game.BanditsConfig;
+import mudrutom.game.BanditPositions;
 import mudrutom.game.Cell;
+import mudrutom.game.GameConfig;
 import mudrutom.game.GameNode;
 import mudrutom.game.GameTreeHelper;
 import mudrutom.game.Maze;
@@ -37,9 +38,9 @@ public class HW2main {
 		sb.append("\nGame Tree:\n");
 		sb.append(gameTree.toString()).append('\n');
 
-		final BanditsConfig banditsConfig = new BanditsConfig(maze);
-		sb.append("\nBandits Config:\n");
-		for (List<Cell> positions : banditsConfig.getPossiblePositions()) {
+		final GameConfig gameConfig = maze.getGameConfig();
+		sb.append("\nBandit positions:\n");
+		for (BanditPositions positions : gameConfig.getPossibleBanditPositions()) {
 			sb.append(positions).append('\n');
 		}
 
@@ -58,7 +59,7 @@ public class HW2main {
 		System.out.println(sb.toString());
 
 		try {
-			final LinearProgram lpAgent = LPBuilder.buildPForAgent(nodes, banditsConfig);
+			final LinearProgram lpAgent = LPBuilder.buildPForAgent(nodes, gameConfig);
 			lpAgent.export("lp");
 			lpAgent.solve();
 			System.out.println(String.format("value of the game = %f", lpAgent.getObjectiveValue()));

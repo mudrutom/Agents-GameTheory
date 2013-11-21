@@ -23,11 +23,17 @@ public class Maze implements GameConstants {
 	/** List of dangerous cells on the maze. */
 	private List<Cell> dangers;
 
-	/** The MAze class constructor. */
+	/** The Maze class constructor. */
 	public Maze(BufferedReader input) throws IOException, NumberFormatException {
 		this.maze = parseMaze(input);
 		this.numberOfBandits = parseInt(input);
 		this.attackProbability = parseDouble(input);
+		analyzeMaze();
+	}
+
+	/** @return a Cell value at given <tt>[x,y]</tt> coordinates */
+	public Cell get(int x, int y) {
+		return new Cell(x, y, maze[y][x]);
 	}
 
 	/** @return height of the maze */
@@ -60,18 +66,9 @@ public class Maze implements GameConstants {
 		return dangers;
 	}
 
-	/** Performs analysis of the maze cells. */
-	public void analyzeMaze() {
-		dangers = new LinkedList<Cell>();
-		for (int y = 0, height = maze.length; y < height; y++) {
-			for (int x = 0, width = maze[y].length; x < width; x++) {
-				if (maze[y][x] == START) {
-					start = new Cell(x, y, START, null);
-				} else if (maze[y][x] == DANGER) {
-					dangers.add(new Cell(x, y, DANGER, null));
-				}
-			}
-		}
+	/** @return the game configuration for this maze */
+	public GameConfig getGameConfig() {
+		return new GameConfig(numberOfBandits, attackProbability, dangers);
 	}
 
 	/** @return a list of possible descendants for given cell of the maze */
@@ -106,6 +103,23 @@ public class Maze implements GameConstants {
 		}
 
 		return nextCells;
+	}
+
+	/** Performs analysis of the maze cells. */
+	protected void analyzeMaze() {
+		dangers = new LinkedList<Cell>();
+		for (int y = 0, height = maze.length; y < height; y++) {
+			for (int x = 0, width = maze[y].length; x < width; x++) {
+				switch (maze[y][x]) {
+					case START:
+						start = new Cell(x, y, START);
+						break;
+					case DANGER:
+						dangers.add(new Cell(x, y, DANGER));
+						break;
+				}
+			}
+		}
 	}
 
 	@Override

@@ -15,6 +15,11 @@ public class Cell implements GameConstants {
 	protected final Direction direction;
 
 	/** The Cell class constructor. */
+	public Cell(int x, int y, char cell) {
+		this(x, y, cell, null);
+	}
+
+	/** The Cell class constructor. */
 	public Cell(int x, int y, char cell, Direction direction) {
 		this.x = x;
 		this.y = y;

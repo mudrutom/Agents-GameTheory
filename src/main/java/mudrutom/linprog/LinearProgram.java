@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class LinearProgram {
 
-	/** Default bounds to be used variable initialization. */
+	/** Default bounds to be used for variable initialization. */
 	public static final double LB = 0.0, UB = 1.0;
 
 	/** The CPLEX model of this LP. */
