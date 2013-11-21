@@ -1,5 +1,6 @@
 package mudrutom.utils;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,10 +80,20 @@ public class TreeNode<T> {
 
 	@Override
 	public String toString() {
+		return toString(0);
+	}
+
+	/** @return value of <tt>toString()</tt> for given depth */
+	private String toString(int depth) {
+		final char[] indent = new char[2 * depth];
+		Arrays.fill(indent, ' ');
+
 		final StringBuilder sb = new StringBuilder();
-		sb.append("node {").append(node.toString()).append("}\n");
+		sb.append(indent).append("node {").append(node.toString()).append("}\n");
 		for (TreeNode<T> child : children) {
-			sb.append("  child {").append(child.toString()).append("}");
+			sb.append(indent).append("child {\n");
+			sb.append(child.toString(depth + 1));
+			sb.append(indent).append("}\n");
 		}
 		return sb.toString();
 	}
