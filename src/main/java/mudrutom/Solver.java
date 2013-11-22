@@ -28,6 +28,8 @@ public class Solver {
 
 	/** The maze instance to solve. */
 	private Maze maze;
+	/** The name of the problem to solve. */
+	private String problemName;
 	/** Current game configuration. */
 	private GameConfig gameConfig;
 	/** Possible positions of the bandits. */
@@ -59,8 +61,9 @@ public class Solver {
 	}
 
 	/** Initializes the solver for given maze instance. */
-	public void initialize(Maze maze) {
+	public void initialize(Maze maze, String problemName) {
 		this.maze = maze;
+		this.problemName = problemName;
 
 		// first analysis of the maze
 		maze.analyzeMaze();
@@ -95,7 +98,7 @@ public class Solver {
 		System.out.println("\n================= SOLVER START ==================\n");
 
 		// first the agent LP
-		agentLP = LPBuilder.buildAgentLP(gameTree, utilityTable);
+		agentLP = LPBuilder.buildAgentLP(gameTree, utilityTable, problemName + " AGENT LP");
 
 		if (exportFile != null) {
 			// export the agent LP to file
@@ -108,7 +111,7 @@ public class Solver {
 		agentLP.close();
 
 		// second the bandits LP
-		banditsLP = LPBuilder.buildBanditsLP(gameTree, utilityTable);
+		banditsLP = LPBuilder.buildBanditsLP(gameTree, utilityTable, problemName + " BANDITS LP");
 
 		if (exportFile != null) {
 			// export the bandits LP to file
@@ -153,6 +156,7 @@ public class Solver {
 	public void clear() {
 		// clean-up
 		maze = null;
+		problemName = null;
 		gameConfig = null;
 		possiblePositions = null;
 		gameTree = null;

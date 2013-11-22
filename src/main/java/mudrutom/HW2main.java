@@ -24,7 +24,7 @@ public class HW2main {
 
 		// crate the game solver for this maze
 		final Solver gameSolver = new Solver();
-		gameSolver.initialize(maze);
+		gameSolver.initialize(maze, "GAME THEORY");
 
 		if (DEBUG) gameSolver.printDebugInfo();
 

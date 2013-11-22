@@ -47,6 +47,11 @@ public class LinearProgram {
 		objectiveValue = Double.NaN;
 	}
 
+	/** Sets the problem name of the LP. */
+	public void setProblemName(String name) {
+		model.setName(name);
+	}
+
 	/** @return the model of this LP */
 	public IloModeler getModel() {
 		return model;

@@ -22,9 +22,11 @@ public class LPBuilder {
 	private LPBuilder() {}
 
 	/** Constructs and returns LP for the agent player. */
-	public static LinearProgram buildAgentLP(final Tree<GameNode> gameTree, final Table<GameNode, BanditPositions, Double> utilityTable) throws IloException {
+	public static LinearProgram buildAgentLP(final Tree<GameNode> gameTree, final Table<GameNode, BanditPositions, Double> utilityTable,
+											 String problemName) throws IloException {
 		final LinearProgram lp = new LinearProgram();
 		final IloModeler model = lp.getModel();
+		lp.setProblemName(problemName);
 
 		final List<GameNode> leafNodes = new LinkedList<GameNode>();
 
@@ -69,9 +71,11 @@ public class LPBuilder {
 	}
 
 	/** Constructs and returns LP for the bandits. */
-	public static LinearProgram buildBanditsLP(final Tree<GameNode> gameTree, final Table<GameNode, BanditPositions, Double> utilityTable) throws IloException {
+	public static LinearProgram buildBanditsLP(final Tree<GameNode> gameTree, final Table<GameNode, BanditPositions, Double> utilityTable,
+											   String problemName) throws IloException {
 		final LinearProgram lp = new LinearProgram();
 		final IloModeler model = lp.getModel();
+		lp.setProblemName(problemName);
 
 		final List<BanditPositions> possibleBanditPositions = utilityTable.getColumnIndices();
 

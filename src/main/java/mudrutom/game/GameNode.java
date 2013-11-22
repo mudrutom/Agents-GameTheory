@@ -40,11 +40,6 @@ public class GameNode extends Cell {
 		return sequenceString;
 	}
 
-	/** @return <tt>true</tt> iff the sequence of this node is empty */
-	public boolean isEmptySequence() {
-		return sequence == null || sequence.length < 1;
-	}
-
 	/** @return <tt>true</tt> iff it's a terminal node */
 	public boolean isTerminal() {
 		return isTerminal;
@@ -75,19 +70,6 @@ public class GameNode extends Cell {
 		this.dangersOnPath = dangersOnPath;
 	}
 
-	/** @return a string representation of given sequence */
-	public static String getSequenceString(Direction[] sequence) {
-		if (sequence.length < 1) {
-			return "{}";
-		}
-
-		final StringBuilder sb = new StringBuilder();
-		for (Direction d : sequence) {
-			sb.append(d.toShortString());
-		}
-		return sb.toString();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -102,5 +84,18 @@ public class GameNode extends Cell {
 		int result = super.hashCode();
 		result = 31 * result + sequenceString.hashCode();
 		return result;
+	}
+
+	/** @return a string representation of given sequence */
+	public static String getSequenceString(Direction[] sequence) {
+		if (sequence.length < 1) {
+			return "{}";
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		for (Direction d : sequence) {
+			sb.append(d.toShortString());
+		}
+		return sb.toString();
 	}
 }
