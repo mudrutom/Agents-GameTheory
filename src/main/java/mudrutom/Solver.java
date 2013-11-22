@@ -246,7 +246,7 @@ public class Solver {
 		// print the value of the game
 		output.append("\nSOLUTION_VALUE:\n");
 		final double agentGameValue = agentLP.getObjectiveValue();
-		output.append(" agent = ").append(agentGameValue).append('\n');
+		output.append(" agent   = ").append(agentGameValue).append('\n');
 		final double banditsGameValue = banditsLP.getObjectiveValue();
 		output.append(" bandits = ").append(banditsGameValue).append('\n');
 		if (Double.compare(agentGameValue, banditsGameValue) == 0) {

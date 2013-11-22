@@ -11,7 +11,7 @@ import java.io.*;
 public class HW2main {
 
 	/** Debug flag. */
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	/** Flag indicating weather to exclude zero utility values. */
 	private static final boolean EXCLUDE_ZERO_UTILITY_VALUES = true;
 
