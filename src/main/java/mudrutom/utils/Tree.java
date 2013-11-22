@@ -66,7 +66,7 @@ public class Tree<T> {
 	}
 
 	/** Applies given Visitor to all nodes of the tree. */
-	public void applyVisitor(Visitor<TreeNode<T>> visitor) {
+	public <E extends Throwable> void applyVisitor(Visitor<TreeNode<T>, E> visitor) throws E {
 		root.apply(visitor);
 	}
 

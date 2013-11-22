@@ -56,7 +56,7 @@ public class GameTreeHelper implements GameConstants {
 	/** Analyzes and returns all nodes from given game tree. */
 	public static List<GameNode> analyzeAllNodes(Tree<GameNode> tree) {
 		final List<GameNode> nodes = new LinkedList<GameNode>();
-		final Visitor<TreeNode<GameNode>> nodeVisitor = new Visitor<TreeNode<GameNode>>() {
+		final Visitor<TreeNode<GameNode>, RuntimeException> nodeVisitor = new Visitor<TreeNode<GameNode>, RuntimeException>() {
 			@Override
 			public void visit(TreeNode<GameNode> treeNode) {
 				final GameNode gameNode = treeNode.getNode();

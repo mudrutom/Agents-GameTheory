@@ -69,7 +69,7 @@ public class TreeNode<T> {
 	}
 
 	/** Uses provided Visitor to visit itself and all its children. */
-	public void apply(Visitor<TreeNode<T>> visitor) {
+	public <E extends Throwable> void apply(Visitor<TreeNode<T>, E> visitor) throws E {
 		if (visitor != null) {
 			visitor.visit(this);
 			for (TreeNode<T> child : children) {

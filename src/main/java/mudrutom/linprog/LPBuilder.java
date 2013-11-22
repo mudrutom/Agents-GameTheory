@@ -31,25 +31,21 @@ public class LPBuilder {
 		lp.setBounds(0.0, 1.0);
 
 		// realization plan constraints
-		final Visitor<TreeNode<GameNode>> treeVisitor = new Visitor<TreeNode<GameNode>>() {
+		final Visitor<TreeNode<GameNode>, IloException> treeVisitor = new Visitor<TreeNode<GameNode>, IloException>() {
 			@Override
-			public void visit(TreeNode<GameNode> treeNode) {
+			public void visit(TreeNode<GameNode> treeNode) throws IloException {
 				if (treeNode.isLeaf()) {
 					leafNodes.add(treeNode.getNode());
 					return;
 				}
-				try {
-					final IloNumVar var = lp.getVar(treeNode);
-					final IloNumVar[] childVars = lp.getVarsForTreeNodes(treeNode.getChildren());
-					model.addEq(var, model.sum(childVars), "c_" + treeNode.getNode().getSequenceString());
 
-					if (treeNode.isRoot()) {
-						model.addEq(var, 1.0, "c_root");
-					}
-				} catch (IloException e) {
-					System.err.println("IloException: " + e.getMessage());
-					System.exit(10);
+				final IloNumVar var = lp.getVar(treeNode);
+				if (treeNode.isRoot()) {
+					model.addEq(var, 1.0, "c_root");
 				}
+
+				final IloNumVar[] childVars = lp.getVarsForTreeNodes(treeNode.getChildren());
+				model.addEq(var, model.sum(childVars), "c_" + treeNode.getNode().getSequenceString());
 			}
 		};
 		gameTree.applyVisitor(treeVisitor);
@@ -60,15 +56,11 @@ public class LPBuilder {
 		final IloNumVar root = lp.getVar("v_{}");
 		lp.maximize(root);
 
-		// optimizing against the opponent best response
+		// optimizing against the best response of the opponent
 		final IloNumVar[] leafVars = lp.getVarsForGameNodes(leafNodes);
 		for (BanditPositions banditPositions : utilityTable.getColumnIndices()) {
 			if (!banditPositions.isEmpty()) {
-				double[] utilities = new double[leafNodes.size()];
-				Iterator<GameNode> leafIterator = leafNodes.iterator();
-				for (int i = 0; leafIterator.hasNext(); i++) {
-					utilities[i] = utilityTable.get(leafIterator.next(), banditPositions);
-				}
+				double[] utilities = getUtilityVector(leafNodes, banditPositions, utilityTable);
 				model.addLe(root, model.scalProd(utilities, leafVars), "c_" + banditPositions.toString());
 			}
 		}
@@ -105,37 +97,53 @@ public class LPBuilder {
 		final IloNumVar root = lp.getVar("v_{}");
 		lp.minimize(root);
 
-		// optimizing against the opponent best response
-		final Visitor<TreeNode<GameNode>> treeVisitor = new Visitor<TreeNode<GameNode>>() {
+		// optimizing against the best response of the opponent
+		final IloNumVar[] positionsVars = lp.getVarsForPositions(possibleBanditPositions);
+		final Visitor<TreeNode<GameNode>, IloException> treeVisitor = new Visitor<TreeNode<GameNode>, IloException>() {
 			@Override
-			public void visit(TreeNode<GameNode> treeNode) {
-				try {
-					final String name = treeNode.getNode().getSequenceString();
+			public void visit(TreeNode<GameNode> treeNode) throws IloException {
+				final String name = treeNode.getNode().getSequenceString();
+				if (treeNode.isLeaf()) {
+					final String parentName = treeNode.getParent().getNode().getSequenceString();
+					final IloNumVar parentVar = lp.getVar("v_" + parentName);
+					final double[] utilities = getUtilityVector(possibleBanditPositions, treeNode.getNode(), utilityTable);
+					model.addGe(parentVar, model.scalProd(utilities, positionsVars), "c_" + name);
+				} else {
 					final IloNumVar var = lp.getVar("v_" + name);
-
-					if (treeNode.isLeaf()) {
-						final IloNumVar[] positionsVars = lp.getVarsForPositions(possibleBanditPositions);
-						final double[] utilities = new double[positionsVars.length];
-						final Iterator<BanditPositions> positionsIterator = possibleBanditPositions.iterator();
-						for (int i = 0; positionsIterator.hasNext(); i++) {
-							utilities[i] = utilityTable.get(treeNode.getNode(), positionsIterator.next());
-						}
-						model.addGe(var, model.scalProd(utilities, positionsVars), "c_" + name);
-					} else {
-						for (TreeNode<GameNode> child : treeNode.getChildren()) {
+					for (TreeNode<GameNode> child : treeNode.getChildren()) {
+						if (!child.isLeaf()) {
 							String childName = child.getNode().getSequenceString();
 							IloNumVar childVar = lp.getVar("v_" + childName);
 							model.addGe(var, childVar, "c_" + childName);
 						}
 					}
-				} catch (IloException e) {
-					System.err.println("IloException: " + e.getMessage());
-					System.exit(10);
 				}
 			}
 		};
 		gameTree.applyVisitor(treeVisitor);
 
 		return lp;
+	}
+
+	/** @return utility vector for given game nodes and bandit positions */
+	private static double[] getUtilityVector(List<GameNode> gameNodes, BanditPositions banditPositions,
+											 Table<GameNode, BanditPositions, Double> utilityTable) {
+		final double[] utilities = new double[gameNodes.size()];
+		final Iterator<GameNode> nodeIterator = gameNodes.iterator();
+		for (int i = 0; nodeIterator.hasNext(); i++) {
+			utilities[i] = utilityTable.get(nodeIterator.next(), banditPositions);
+		}
+		return utilities;
+	}
+
+	/** @return utility vector for given possible bandit positions and game node */
+	private static double[] getUtilityVector(List<BanditPositions> possibleBanditPositions, GameNode gameNode,
+											 Table<GameNode, BanditPositions, Double> utilityTable) {
+		final double[] utilities = new double[possibleBanditPositions.size()];
+		final Iterator<BanditPositions> positionsIterator = possibleBanditPositions.iterator();
+		for (int i = 0; positionsIterator.hasNext(); i++) {
+			utilities[i] = utilityTable.get(gameNode, positionsIterator.next());
+		}
+		return utilities;
 	}
 }

@@ -77,7 +77,7 @@ public class Table<R, C, V> {
 	}
 
 	/** Applies given Visitor to specified row of the table. */
-	public void applyRowVisitor(R row, Visitor<V> visitor) {
+	public <E extends Throwable> void applyRowVisitor(R row, Visitor<V, E> visitor) throws E {
 		final Integer r = rowIndex.get(row);
 		if (r != null) {
 			for (int i = 0; i < values[r].length; i++) {
@@ -87,7 +87,7 @@ public class Table<R, C, V> {
 	}
 
 	/** Applies given Visitor to specified column of the table. */
-	public void applyColumnVisitor(C column, Visitor<V> visitor) {
+	public <E extends Throwable> void applyColumnVisitor(C column, Visitor<V, E> visitor) throws E {
 		final Integer c = columnIndex.get(column);
 		if (c != null) {
 			for (final V[] row : values) {
