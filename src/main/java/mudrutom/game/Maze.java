@@ -138,13 +138,18 @@ public class Maze implements GameConstants {
 		final int n = parseInt(input);
 
 		final char[][] maze = new char[m][];
+		boolean hasStart = false;
 		for (int i = 0; i < m; i++) {
 			final String line = input.readLine();
 			if (line == null || line.length() < n) {
 				throw new IOException("unexpected line '" + line + "'");
 			}
+			if (!hasStart && line.indexOf(START) != -1) {
+				hasStart = true;
+			}
 			maze[i] = line.substring(0, n).toCharArray();
 		}
+		if (!hasStart) throw new IOException("the maze has no start square '" + START + "'!");
 		return maze;
 	}
 

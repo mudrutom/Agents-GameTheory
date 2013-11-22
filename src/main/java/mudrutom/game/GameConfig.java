@@ -71,8 +71,10 @@ public class GameConfig implements GameConstants {
 		possibleBanditPositions = new LinkedList<BanditPositions>();
 		possibleBanditPositions.add(new BanditPositions(Collections.<Cell>emptyList()));
 
-		// special case
-		if (dangers.size() <= numberOfBandits) {
+		// special cases
+		if (dangers.isEmpty() || numberOfBandits < 1) {
+			return possibleBanditPositions;
+		} else if (dangers.size() <= numberOfBandits) {
 			possibleBanditPositions.add(new BanditPositions(dangers));
 			return possibleBanditPositions;
 		}
