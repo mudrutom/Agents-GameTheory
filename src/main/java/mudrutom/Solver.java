@@ -172,15 +172,16 @@ public class Solver {
 
 		// print all sequences for each player
 		output.append("\nAGENT:\n");
-		int s = 0;
+		int s = 1;
 		for (GameNode node : gameNodes) {
-			output.append(" S").append(++s).append(": ");
-			output.append(node.getSequenceString()).append('\n');
+			output.append(" S").append(s++).append(": ");
+			output.append(node.getSequenceString());
+			output.append(node.isTerminal() ? " (*)" : "").append('\n');
 		}
 		output.append("\nATTACKER:\n");
-		int q = 0;
+		int q = 1;
 		for (BanditPositions positions : possiblePositions) {
-			output.append(" Q").append(++q).append(": ");
+			output.append(" Q").append(q++).append(": ");
 			output.append(positions.toString()).append('\n');
 		}
 
@@ -188,7 +189,7 @@ public class Solver {
 		Arrays.fill(rowLabel, ' ');
 		final char[] columnLabel = new char[8];
 		Arrays.fill(columnLabel, ' ');
-		final char[] line = new char[18 + (possiblePositions.size() - (excludeZeros ? 1 : 0)) * 12];
+		final char[] line = new char[18 + 12 * (possiblePositions.size() - (excludeZeros ? 1 : 0))];
 		Arrays.fill(line, '-');
 
 		// print the utility table itself
@@ -200,7 +201,7 @@ public class Solver {
 		output.append("|\n");
 		output.append(line).append('\n');
 		final Iterator<GameNode> nodeIterator = gameNodes.iterator();
-		for (s = 0; nodeIterator.hasNext(); s++) {
+		for (s = 1; nodeIterator.hasNext(); s++) {
 			GameNode node = nodeIterator.next();
 			if (excludeZeros && node.getUtility() == 0.0) continue;
 
@@ -225,15 +226,16 @@ public class Solver {
 
 		// print all realization plans for each player
 		output.append("\nSOLUTION_AGENT:\n");
-		int s = 0;
+		int s = 1;
 		for (GameNode node : gameNodes) {
-			output.append(" S").append(++s).append(": ");
-			output.append(agentRealizationPlans.get(node)).append('\n');
+			output.append(" S").append(s++).append(": ");
+			output.append(agentRealizationPlans.get(node));
+			output.append(node.isTerminal() ? " (*)" : "").append('\n');
 		}
 		output.append("\nSOLUTION_ATTACKER:\n");
-		int q = 0;
+		int q = 1;
 		for (BanditPositions positions : possiblePositions) {
-			output.append(" Q").append(++q).append(": ");
+			output.append(" Q").append(q++).append(": ");
 			output.append(banditsRealizationPlans.get(positions)).append('\n');
 		}
 

@@ -13,6 +13,8 @@ public class GameNode extends Cell {
 	/** The sequence of this node as a string. */
 	protected final String sequenceString;
 
+	/** Indicates weather it's a terminal node. */
+	protected boolean isTerminal;
 	/** Utility value of this node. */
 	protected double utility;
 	/** Dangers crossed by a path to this node. */
@@ -23,6 +25,7 @@ public class GameNode extends Cell {
 		super(cell.getX(), cell.getY(), cell.getCell(), cell.getDirection());
 		this.sequence = sequence;
 		sequenceString = getSequenceString(sequence);
+		isTerminal = false;
 		utility = Double.NaN;
 		dangersOnPath = Collections.emptyList();
 	}
@@ -40,6 +43,16 @@ public class GameNode extends Cell {
 	/** @return <tt>true</tt> iff the sequence of this node is empty */
 	public boolean isEmptySequence() {
 		return sequence == null || sequence.length < 1;
+	}
+
+	/** @return <tt>true</tt> iff it's a terminal node */
+	public boolean isTerminal() {
+		return isTerminal;
+	}
+
+	/** Sets weather it's a terminal node. */
+	public void setTerminal(boolean terminal) {
+		isTerminal = terminal;
 	}
 
 	/** @return utility value of this node. */

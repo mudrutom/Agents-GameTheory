@@ -5,6 +5,7 @@ import mudrutom.utils.TreeNode;
 import mudrutom.utils.Visitor;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,9 +59,11 @@ public class GameTreeHelper implements GameConstants {
 		final Visitor<TreeNode<GameNode>> nodeVisitor = new Visitor<TreeNode<GameNode>>() {
 			@Override
 			public void visit(TreeNode<GameNode> treeNode) {
-				treeNode.getNode().setUtility(getUtilityValue(treeNode));
-				treeNode.getNode().setDangersOnPath(findDangersOnPath(treeNode));
-				nodes.add(treeNode.getNode());
+				final GameNode gameNode = treeNode.getNode();
+				gameNode.setTerminal(treeNode.isLeaf());
+				gameNode.setUtility(getUtilityValue(treeNode));
+				gameNode.setDangersOnPath(findDangersOnPath(treeNode));
+				nodes.add(gameNode);
 			}
 		};
 		tree.applyVisitor(nodeVisitor);
@@ -69,15 +72,13 @@ public class GameTreeHelper implements GameConstants {
 
 	/** Returns a list of dangers on a path to given tree node. */
 	public static List<Cell> findDangersOnPath(TreeNode<GameNode> treeNode) {
-		final List<Cell> dangers = new LinkedList<Cell>();
-		findDangersOnPath(treeNode, dangers);
+		if (treeNode.isRoot()) return Collections.emptyList();
+		// inherit the dangers list from its parent
+		final List<Cell> dangers = new LinkedList<Cell>(treeNode.getParent().getNode().getDangersOnPath());
+		if (treeNode.getNode().isDanger()) {
+			dangers.add(treeNode.getNode());
+		}
 		return dangers;
-	}
-
-	/** Collects all dangers on a path to given tree node. */
-	private static void findDangersOnPath(TreeNode<GameNode> treeNode, List<Cell> dangers) {
-		if (treeNode.getNode().isDanger()) dangers.add(treeNode.getNode());
-		if (treeNode.getParent() != null) findDangersOnPath(treeNode.getParent(), dangers);
 	}
 
 	/** Returns utility value <tt>u()</tt> of given tree node. */
