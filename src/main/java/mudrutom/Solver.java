@@ -43,6 +43,10 @@ public class Solver {
 	private LinearProgram agentLP;
 	/** Calculated realization plans for the agent. */
 	private Map<GameNode, Double> agentRealizationPlans;
+	/** The Linear Program for the bandits. */
+	private LinearProgram banditsLP;
+	/** Calculated realization plans for the bandits. */
+	private Map<BanditPositions, Double> banditsRealizationPlans;
 
 	/** The Solver class constructor. */
 	public Solver() {
@@ -89,6 +93,8 @@ public class Solver {
 	 */
 	public boolean solveLP(String exportFile) throws IloException {
 		System.out.println("\n================= SOLVER START ==================\n");
+
+		// first the agent LP
 		agentLP = LPBuilder.buildAgentLP(gameTree, utilityTable);
 
 		if (exportFile != null) {
@@ -97,11 +103,26 @@ public class Solver {
 		}
 
 		// solves the agent LP
-		final boolean feasible = agentLP.solve();
-		extractAgentRealizationPlans(feasible);
+		final boolean agentFeasible = agentLP.solve();
+		extractAgentRealizationPlans(agentFeasible);
 		agentLP.close();
+
+		// second the bandits LP
+		banditsLP = LPBuilder.buildBanditsLP(gameTree, utilityTable);
+
+		if (exportFile != null) {
+			// export the bandits LP to file
+			banditsLP.export(exportFile + "_bandits");
+		}
+
+		// solves the bandits LP
+		final boolean banditsFeasible = banditsLP.solve();
+		extractBanditsRealizationPlans(banditsFeasible);
+		banditsLP.close();
+
 		System.out.println("\n====================== END ======================\n");
 
+		final boolean feasible = agentFeasible && banditsFeasible;
 		if (feasible) state = SolverState.DONE;
 		return feasible;
 	}
@@ -117,6 +138,17 @@ public class Solver {
 		}
 	}
 
+	/** Extracts all realizations plans of the bandits. */
+	private void extractBanditsRealizationPlans(boolean feasible) throws IloException {
+		if (feasible) {
+			banditsRealizationPlans = new HashMap<BanditPositions, Double>(possiblePositions.size());
+			for (BanditPositions positions : possiblePositions) {
+				double probability = banditsLP.getValue(positions);
+				banditsRealizationPlans.put(positions, probability);
+			}
+		}
+	}
+
 	/** Preforms clean-up of the solver. */
 	public void clear() {
 		// clean-up
@@ -128,6 +160,8 @@ public class Solver {
 		utilityTable = null;
 		agentLP = null;
 		agentRealizationPlans = null;
+		banditsLP = null;
+		banditsRealizationPlans = null;
 
 		state = SolverState.INIT;
 	}
@@ -181,7 +215,7 @@ public class Solver {
 		}
 		output.append(line).append('\n');
 		if (excludeZeros) {
-			output.append("[NOTE: zero utility values are omitted!]\n");
+			output.append(" NOTE: zero utility values are omitted\n");
 		}
 	}
 
@@ -196,11 +230,24 @@ public class Solver {
 			output.append(" S").append(++s).append(": ");
 			output.append(agentRealizationPlans.get(node)).append('\n');
 		}
+		output.append("\nSOLUTION_ATTACKER:\n");
+		int q = 0;
+		for (BanditPositions positions : possiblePositions) {
+			output.append(" Q").append(++q).append(": ");
+			output.append(banditsRealizationPlans.get(positions)).append('\n');
+		}
 
 		// print the value of the game
 		output.append("\nSOLUTION_VALUE:\n");
 		final double agentGameValue = agentLP.getObjectiveValue();
 		output.append(" agent = ").append(agentGameValue).append('\n');
+		final double banditsGameValue = banditsLP.getObjectiveValue();
+		output.append(" bandits = ").append(banditsGameValue).append('\n');
+		if (Double.compare(agentGameValue, banditsGameValue) == 0) {
+			output.append(" OK - game values coincides\n");
+		} else {
+			output.append(" !! - game values differs\n");
+		}
 	}
 
 	/** Prints debug information. */

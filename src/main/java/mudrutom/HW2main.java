@@ -89,6 +89,7 @@ public class HW2main {
 			} else {
 				System.out.println("Using output FILE: " + args[1]);
 				output = new FileOutputStream(args[1]);
+				results = "SOLUTION FOR " + args[0] + "\n" + results;
 			}
 
 			writer = new OutputStreamWriter(output);

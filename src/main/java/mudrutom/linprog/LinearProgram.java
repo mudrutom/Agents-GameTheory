@@ -6,6 +6,7 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.concert.IloNumVarType;
 import ilog.cplex.IloCplex;
+import mudrutom.game.BanditPositions;
 import mudrutom.game.GameNode;
 import mudrutom.utils.TreeNode;
 
@@ -98,6 +99,11 @@ public class LinearProgram {
 		return getVar("r_" + gameNode.getSequenceString());
 	}
 
+	/** @return variable for given bandit positions */
+	public IloNumVar getVar(BanditPositions positions) throws IloException {
+		return getVar("r_" + positions.toString());
+	}
+
 	/** @return variables for given list of tree nodes */
 	public IloNumVar[] getVarsForTreeNodes(List<TreeNode<GameNode>> treeNodes) throws IloException {
 		final IloNumVar[] vars = new IloNumVar[treeNodes.size()];
@@ -118,6 +124,16 @@ public class LinearProgram {
 		return vars;
 	}
 
+	/** @return variables for given list of bandit positions */
+	public IloNumVar[] getVarsForPositions(List<BanditPositions> positionsList) throws IloException {
+		final IloNumVar[] vars = new IloNumVar[positionsList.size()];
+		final Iterator<BanditPositions> iterator = positionsList.iterator();
+		for (int i = 0; iterator.hasNext(); i++) {
+			vars[i] = getVar(iterator.next());
+		}
+		return vars;
+	}
+
 	/** @return new or existing variable for given name */
 	public IloNumVar getVar(String name) throws IloException {
 		if (variables.containsKey(name)) {
@@ -132,6 +148,11 @@ public class LinearProgram {
 	/** @return value of a variable for given game node */
 	public double getValue(GameNode gameNode) throws IloException {
 		return getValue("r_" + gameNode.getSequenceString());
+	}
+
+	/** @return value of a variable for given bandit positions */
+	public double getValue(BanditPositions banditPositions) throws IloException {
+		return getValue("r_" + banditPositions.toString());
 	}
 
 	/** @return value of a variable for given name */
